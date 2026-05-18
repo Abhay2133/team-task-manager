@@ -1,0 +1,57 @@
+- generic:
+  - generic:
+    - banner:
+      - generic:
+        - link:
+          - /url: /dashboard
+          - text: TaskFlow
+        - navigation:
+          - link:
+            - /url: /dashboard
+            - img
+            - text: Dashboard
+          - link:
+            - /url: /projects
+            - img
+            - text: Projects
+          - generic: Alice Admin
+          - button:
+            - img
+    - main:
+      - generic:
+        - generic:
+          - heading [level=1]: Projects
+          - button [expanded]:
+            - img
+            - text: New Project
+        - generic:
+          - generic:
+            - generic:
+              - heading [level=3]: Website Redesign
+              - paragraph: Redesign the company website with a modern look and feel.
+            - generic:
+              - generic:
+                - generic:
+                  - img
+                  - text: 3 members
+                - generic: 5 tasks
+            - generic:
+              - link:
+                - /url: /projects/seed-project-001
+                - text: Open Board
+  - generic: Bob Member
+  - dialog "Create Project" [ref=e172]:
+    - heading "Create Project" [level=2] [ref=e174]
+    - generic [ref=e175]:
+      - generic [ref=e176]:
+        - text: Name
+        - textbox "Project name" [active] [ref=e177]
+      - generic [ref=e178]:
+        - text: Description (optional)
+        - textbox "What's this project about?" [ref=e179]
+    - generic [ref=e180]:
+      - button "Cancel" [ref=e181] [cursor=pointer]
+      - button "Create" [disabled]
+    - button "Close" [ref=e182] [cursor=pointer]:
+      - img [ref=e183]
+      - generic [ref=e186]: Close

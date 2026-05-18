@@ -1,0 +1,171 @@
+- generic:
+  - generic:
+    - banner:
+      - generic:
+        - link:
+          - /url: /dashboard
+          - text: TaskFlow
+        - navigation:
+          - link:
+            - /url: /dashboard
+            - img
+            - text: Dashboard
+          - link:
+            - /url: /projects
+            - img
+            - text: Projects
+          - generic: Alice Admin
+          - button:
+            - img
+    - main:
+      - generic:
+        - generic:
+          - generic:
+            - button:
+              - img
+            - generic:
+              - heading [level=1]: Website Redesign
+              - paragraph: Redesign the company website with a modern look and feel.
+          - generic:
+            - button:
+              - img
+              - text: Members (3)
+            - button:
+              - img
+              - text: Add Task
+            - button:
+              - img
+        - generic:
+          - generic:
+            - generic:
+              - heading [level=3]: To Do
+              - generic: "3"
+            - generic:
+              - generic:
+                - generic:
+                  - paragraph: Deploy to Railway
+                  - generic:
+                    - button:
+                      - img
+                    - button:
+                      - img
+                - generic:
+                  - generic: Medium
+                - button: → Start
+              - generic:
+                - generic:
+                  - paragraph: "Overdue: Update dependencies"
+                  - generic:
+                    - button:
+                      - img
+                    - button:
+                      - img
+                - paragraph: Upgrade all npm packages to latest stable versions.
+                - generic:
+                  - generic: Low
+                  - generic: Carol Member
+                  - generic:
+                    - img
+                    - img
+                    - text: May 18
+                - button: → Start
+              - generic:
+                - generic:
+                  - paragraph: Write unit tests for API
+                  - generic:
+                    - button:
+                      - img
+                    - button:
+                      - img
+                - paragraph: Cover all REST endpoints with integration tests.
+                - generic:
+                  - generic: Medium
+                  - generic: Carol Member
+                  - generic:
+                    - img
+                    - text: May 26
+                - button: → Start
+          - generic:
+            - generic:
+              - heading [level=3]: In Progress
+              - generic: "2"
+            - generic:
+              - generic:
+                - generic:
+                  - paragraph: Set up CI/CD pipeline
+                  - generic:
+                    - button:
+                      - img
+                    - button:
+                      - img
+                - paragraph: Configure GitHub Actions for automated deployment to Railway.
+                - generic:
+                  - generic: Medium
+                  - generic: Alice Admin
+                  - generic:
+                    - img
+                    - text: May 26
+                - button: → Done
+              - generic:
+                - generic:
+                  - paragraph: Implement responsive navbar
+                  - generic:
+                    - button:
+                      - img
+                    - button:
+                      - img
+                - paragraph: Build the navigation bar using Tailwind CSS.
+                - generic:
+                  - generic: High
+                  - generic: Bob Member
+                  - generic:
+                    - img
+                    - text: May 26
+                - button: → Done
+          - generic:
+            - generic:
+              - heading [level=3]: Done
+              - generic: "1"
+            - generic:
+              - generic:
+                - generic:
+                  - paragraph: Design homepage mockup
+                  - generic:
+                    - button:
+                      - img
+                    - button:
+                      - img
+                - paragraph: Create Figma mockups for the new homepage design.
+                - generic:
+                  - generic: High
+                  - generic: Bob Member
+                  - generic:
+                    - img
+                    - text: May 18
+  - generic: Bob Member
+  - dialog "Manage Members" [ref=e418]:
+    - heading "Manage Members" [level=2] [ref=e420]
+    - generic [ref=e421]:
+      - generic [ref=e422]:
+        - textbox "member@example.com" [active] [ref=e423]
+        - button [disabled]:
+          - img
+      - generic [ref=e424]:
+        - generic [ref=e425]:
+          - generic [ref=e426]: Alice Adminalice@example.com
+          - generic [ref=e428]: ADMIN
+        - generic [ref=e429]:
+          - generic [ref=e430]: Bob Memberbob@example.com
+          - generic [ref=e431]:
+            - generic [ref=e432]: MEMBER
+            - button [ref=e433] [cursor=pointer]:
+              - img [ref=e434]
+        - generic [ref=e437]:
+          - generic [ref=e438]: Carol Membercarol@example.com
+          - generic [ref=e439]:
+            - generic [ref=e440]: MEMBER
+            - button [ref=e441] [cursor=pointer]:
+              - img [ref=e442]
+    - button "Close" [ref=e445] [cursor=pointer]:
+      - img [ref=e446]
+      - generic [ref=e449]: Close
