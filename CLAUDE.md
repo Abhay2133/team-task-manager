@@ -65,6 +65,49 @@ The kanban board (`ProjectDetail`) uses `@dnd-kit/core` + `@dnd-kit/sortable` fo
 - `Task` belongs to `Project` (cascade delete), optionally assigned to a `User`
 - Enums: `Role {ADMIN, MEMBER}`, `TaskStatus {TODO, IN_PROGRESS, DONE}`, `Priority {LOW, MEDIUM, HIGH}`
 
+## Railway Backend Deployment
+
+### 1. Create services
+
+In your Railway project dashboard:
+- Add a **PostgreSQL** plugin — Railway injects `DATABASE_URL` automatically into services in the same project.
+- Add a **GitHub repo** service, set the **Root Directory** to `/backend`.
+
+### 2. Environment variables
+
+Set these in the backend service's Variables tab:
+
+| Variable | Value |
+|---|---|
+| `DATABASE_URL` | Auto-injected by the PostgreSQL plugin (reference variable: `${{Postgres.DATABASE_URL}}`) |
+| `JWT_SECRET` | A strong random string (e.g. `openssl rand -hex 32`) |
+| `PORT` | `5000` |
+| `FRONTEND_URL` | Your Railway frontend public URL (needed for CORS) |
+
+### 3. Build & start commands
+
+In the backend service settings:
+
+```
+Build command:   npm install && npx prisma generate
+Start command:   npx prisma migrate deploy && node server.js
+```
+
+`prisma migrate deploy` applies any pending migrations on every deploy without prompting. `prisma generate` produces the Prisma client from `schema.prisma` at build time.
+
+### 4. First deploy checklist
+
+1. Trigger a deploy — watch logs to confirm migrations run and `Server running on port 5000` appears.
+2. Check `GET /api/health` on the public URL returns `{"status":"ok"}`.
+3. (Optional) Open a Railway shell on the backend service and run `node prisma/seed.js` to load demo users.
+
+### 5. Subsequent schema changes
+
+1. Locally: `cd backend && npx prisma migrate dev --name <description>` — commits a new migration file to `prisma/migrations/`.
+2. Push to GitHub — Railway redeploys and `prisma migrate deploy` applies the new migration automatically.
+
+Never run `prisma migrate dev` in production; it can reset data. Always use `prisma migrate deploy` there.
+
 ### Testing approach
 - **Backend:** Supertest integration tests against a real PostgreSQL DB. Each test file uses timestamped emails to avoid collisions and cleans up via `prisma.user.deleteMany` in `afterAll`.
 - **Frontend:** Vitest + jsdom + `@testing-library/react`. Axios is mocked at the module level; Zustand stores are reset between tests.
