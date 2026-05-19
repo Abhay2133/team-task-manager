@@ -1,5 +1,4 @@
 import { useDraggable } from '@dnd-kit/core';
-import { CSS } from '@dnd-kit/utilities';
 import { format } from 'date-fns';
 import { Calendar, AlertCircle, Pencil, Trash2, GripVertical, Loader2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -58,16 +57,17 @@ export function TaskCardContent({ task, isAdmin, onEdit, onDelete, showGrip = tr
 }
 
 export default function TaskCard({ task, isAdmin, onEdit, onDelete, isSyncing = false }) {
-  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: task.id,
     data: { status: task.status },
     disabled: isSyncing,
   });
 
+  // No transform — card stays in place and fades while dragging.
+  // The placeholder in the target column shows where it will land.
   const style = {
-    transform: CSS.Translate.toString(transform),
-    transition: transform ? undefined : 'box-shadow 150ms ease, opacity 150ms ease',
-    opacity: isDragging ? 0.35 : 1,
+    opacity: isDragging ? 0.25 : 1,
+    transition: 'opacity 120ms ease, box-shadow 150ms ease',
     cursor: isSyncing ? 'default' : isDragging ? 'grabbing' : 'grab',
   };
 

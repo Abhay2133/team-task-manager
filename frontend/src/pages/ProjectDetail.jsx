@@ -3,7 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   DndContext,
-  DragOverlay,
   PointerSensor,
   useSensor,
   useSensors,
@@ -13,7 +12,7 @@ import { Plus, Users, ArrowLeft, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import client from '@/api/client';
 import useAuthStore from '@/store/authStore';
-import TaskCard, { TaskCardContent } from '@/components/TaskCard';
+import TaskCard from '@/components/TaskCard';
 import TaskForm from '@/components/TaskForm';
 import MemberManager from '@/components/MemberManager';
 import { Button } from '@/components/ui/button';
@@ -25,14 +24,17 @@ const COLUMNS = [
   { key: 'DONE',        label: 'Done',        color: 'bg-green-50'  },
 ];
 
-function DroppableColumn({ col, tasks, isAdmin, onEdit, onDelete, syncingIds, isLoading }) {
+function DroppableColumn({ col, tasks, isAdmin, onEdit, onDelete, syncingIds, isLoading, activeTask }) {
   const { setNodeRef, isOver } = useDroppable({ id: col.key });
+
+  // Show placeholder when dragging a card from a different column over this one
+  const showPlaceholder = isOver && activeTask && activeTask.status !== col.key;
 
   return (
     <div
       ref={setNodeRef}
       className={`${col.color} rounded-lg p-3 min-h-[300px] transition-all duration-150
-        ${isOver ? 'ring-2 ring-primary ring-inset scale-[1.01]' : ''}
+        ${isOver && activeTask?.status !== col.key ? 'ring-2 ring-primary ring-inset' : ''}
       `}
     >
       <div className="flex items-center justify-between mb-3">
@@ -54,6 +56,18 @@ function DroppableColumn({ col, tasks, isAdmin, onEdit, onDelete, syncingIds, is
                 onDelete={onDelete}
               />
             ))}
+
+        {/* Drop target placeholder — appears in the column being hovered */}
+        {showPlaceholder && (
+          <div className="border-2 border-dashed border-primary/50 rounded-lg bg-primary/5 p-3 space-y-2 transition-all duration-150">
+            <div className="h-3 bg-primary/20 rounded w-3/4" />
+            <div className="h-2 bg-primary/10 rounded w-1/2" />
+            <div className="flex gap-2">
+              <div className="h-5 w-14 bg-primary/15 rounded-full" />
+              <div className="h-5 w-20 bg-primary/10 rounded-full" />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -68,7 +82,7 @@ export default function ProjectDetail() {
   const [taskFormOpen, setTaskFormOpen] = useState(false);
   const [editingTask, setEditingTask]   = useState(null);
   const [membersOpen, setMembersOpen]   = useState(false);
-  const [activeTask, setActiveTask]     = useState(null);
+  const [draggingTask, setDraggingTask] = useState(null); // card being dragged
   const [syncingIds, setSyncingIds]     = useState(new Set());
 
   const addSyncing    = (id) => setSyncingIds((s) => new Set(s).add(id));
@@ -183,11 +197,11 @@ export default function ProjectDetail() {
 
   // ── DnD handlers ──────────────────────────────────────────────────────────
   const handleDragStart = ({ active }) => {
-    setActiveTask(tasks.find((t) => t.id === active.id) || null);
+    setDraggingTask(tasks.find((t) => t.id === active.id) || null);
   };
 
   const handleDragEnd = ({ active, over }) => {
-    setActiveTask(null);
+    setDraggingTask(null);
     if (!over) return;
     const targetStatus = over.id;
     const task = tasks.find((t) => t.id === active.id);
@@ -242,20 +256,12 @@ export default function ProjectDetail() {
               isAdmin={isAdmin}
               syncingIds={syncingIds}
               isLoading={tasksLoading}
+              activeTask={draggingTask}
               onEdit={(t) => { setEditingTask(t); setTaskFormOpen(true); }}
               onDelete={(taskId) => { if (confirm('Delete this task?')) deleteTask.mutate(taskId); }}
             />
           ))}
         </div>
-
-        {/* Full card ghost while dragging */}
-        <DragOverlay dropAnimation={{ duration: 200, easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)' }}>
-          {activeTask && (
-            <div className="bg-white border-2 border-primary rounded-lg p-3 shadow-2xl space-y-2 rotate-1 opacity-95 pointer-events-none">
-              <TaskCardContent task={activeTask} isAdmin={false} showGrip={true} />
-            </div>
-          )}
-        </DragOverlay>
       </DndContext>
 
       {/* Task Form Dialog */}
