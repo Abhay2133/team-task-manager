@@ -39,7 +39,7 @@ exports.login = asyncHandler(async (req, res, next) => {
   const valid = await bcrypt.compare(password, user.passwordHash);
   if (!valid) return next(new AppError('Invalid credentials', 401));
 
-  const { passwordHash: _, ...safeUser } = user;
+  const { passwordHash: _pw, ...safeUser } = user;
   res.json({ token: signToken(user), user: safeUser });
 });
 
