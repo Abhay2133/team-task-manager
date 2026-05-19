@@ -63,10 +63,11 @@ export default function TaskCard({ task, isAdmin, onEdit, onDelete, isSyncing = 
     disabled: isSyncing,
   });
 
-  // No transform — card stays in place and fades while dragging.
-  // The placeholder in the target column shows where it will land.
+  // Card stays in place while dragging — fades slightly and gets a dashed
+  // border so the user can see its origin slot. The placeholder in the
+  // target column shows where it will land.
   const style = {
-    opacity: isDragging ? 0.25 : 1,
+    opacity: isDragging ? 0.5 : 1,
     transition: 'opacity 120ms ease, box-shadow 150ms ease',
     cursor: isSyncing ? 'default' : isDragging ? 'grabbing' : 'grab',
   };
@@ -75,9 +76,11 @@ export default function TaskCard({ task, isAdmin, onEdit, onDelete, isSyncing = 
     <div
       ref={setNodeRef}
       style={style}
-      className={`relative bg-white border rounded-lg p-3 shadow-sm space-y-2 select-none
-        transition-shadow duration-150 hover:shadow-md
-        ${isDragging ? 'shadow-xl ring-2 ring-primary' : ''}
+      className={`relative bg-white rounded-lg p-3 shadow-sm space-y-2 select-none
+        transition-all duration-150 hover:shadow-md
+        ${isDragging
+          ? 'border-2 border-dashed border-primary/60 shadow-none'
+          : 'border'}
       `}
     >
       {/* Syncing overlay */}

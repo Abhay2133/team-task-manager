@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   DndContext,
+  DragOverlay,
   PointerSensor,
   useSensor,
   useSensors,
@@ -12,7 +13,7 @@ import { Plus, Users, ArrowLeft, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import client from '@/api/client';
 import useAuthStore from '@/store/authStore';
-import TaskCard from '@/components/TaskCard';
+import TaskCard, { TaskCardContent } from '@/components/TaskCard';
 import TaskForm from '@/components/TaskForm';
 import MemberManager from '@/components/MemberManager';
 import { Button } from '@/components/ui/button';
@@ -262,6 +263,16 @@ export default function ProjectDetail() {
             />
           ))}
         </div>
+
+        {/* Floating card that follows the cursor — dropAnimation=null prevents
+            the snap-back; optimistic update already placed the card correctly */}
+        <DragOverlay dropAnimation={null}>
+          {draggingTask && (
+            <div className="bg-white border-2 border-primary rounded-lg p-3 shadow-2xl space-y-2 rotate-1 opacity-95 pointer-events-none w-72">
+              <TaskCardContent task={draggingTask} isAdmin={false} showGrip={true} />
+            </div>
+          )}
+        </DragOverlay>
       </DndContext>
 
       {/* Task Form Dialog */}
