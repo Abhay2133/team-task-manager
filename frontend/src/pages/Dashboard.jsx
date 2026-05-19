@@ -4,8 +4,6 @@ import { CheckCircle2, Clock, AlertTriangle, ListTodo } from 'lucide-react';
 import client from '@/api/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-const statCard = (title, value, icon, colorClass) => ({ title, value, icon, colorClass });
-
 export default function Dashboard() {
   const { data, isLoading } = useQuery({
     queryKey: ['dashboard-stats'],

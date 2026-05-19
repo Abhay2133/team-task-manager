@@ -1,28 +1,73 @@
+import { useDraggable } from '@dnd-kit/core';
+import { CSS } from '@dnd-kit/utilities';
 import { format } from 'date-fns';
-import { Calendar, AlertCircle, Pencil, Trash2 } from 'lucide-react';
+import { Calendar, AlertCircle, Pencil, Trash2, GripVertical, Loader2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 
 const PRIORITY_VARIANT = { LOW: 'secondary', MEDIUM: 'warning', HIGH: 'destructive' };
-const PRIORITY_LABEL = { LOW: 'Low', MEDIUM: 'Medium', HIGH: 'High' };
+const PRIORITY_LABEL   = { LOW: 'Low', MEDIUM: 'Medium', HIGH: 'High' };
 
-export default function TaskCard({ task, isAdmin, onEdit, onDelete, onStatusChange }) {
-  const isOverdue = task.dueDate && new Date(task.dueDate) < new Date() && task.status !== 'DONE';
-  const canChangeStatus = isAdmin || task.assignedTo?.id === task._currentUserId;
+export default function TaskCard({ task, isAdmin, onEdit, onDelete, isSyncing = false }) {
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+    id: task.id,
+    data: { status: task.status },
+    disabled: isSyncing,
+  });
 
-  const nextStatus = { TODO: 'IN_PROGRESS', IN_PROGRESS: 'DONE', DONE: 'TODO' };
-  const nextLabel = { TODO: '→ Start', IN_PROGRESS: '→ Done', DONE: '↺ Reopen' };
+  const style = {
+    transform: CSS.Translate.toString(transform),
+    transition: transform ? undefined : 'box-shadow 150ms ease, opacity 150ms ease',
+    opacity: isDragging ? 0.35 : 1,
+    cursor: isSyncing ? 'default' : isDragging ? 'grabbing' : 'grab',
+  };
+
+  const isOverdue =
+    task.dueDate && new Date(task.dueDate) < new Date() && task.status !== 'DONE';
 
   return (
-    <div className="bg-white border rounded-lg p-3 shadow-sm space-y-2 hover:shadow-md transition-shadow">
-      <div className="flex items-start justify-between gap-2">
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`relative bg-white border rounded-lg p-3 shadow-sm space-y-2 select-none
+        transition-shadow duration-150 hover:shadow-md
+        ${isSyncing ? 'opacity-70' : ''}
+        ${isDragging ? 'shadow-xl ring-2 ring-primary' : ''}
+      `}
+    >
+      {/* Syncing overlay */}
+      {isSyncing && (
+        <div className="absolute inset-0 bg-white/60 rounded-lg flex items-center justify-center z-10">
+          <Loader2 className="h-4 w-4 animate-spin text-primary" />
+        </div>
+      )}
+
+      <div className="flex items-start gap-2">
+        <span
+          {...listeners}
+          {...attributes}
+          className={`mt-0.5 shrink-0 transition-colors ${isSyncing ? 'text-muted-foreground/30' : 'text-muted-foreground hover:text-foreground'}`}
+        >
+          <GripVertical className="h-4 w-4" />
+        </span>
+
         <p className="text-sm font-medium leading-tight flex-1">{task.title}</p>
+
         {isAdmin && (
           <div className="flex gap-1 shrink-0">
-            <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => onEdit(task)}>
+            <Button
+              variant="ghost" size="icon" className="h-6 w-6"
+              onClick={() => onEdit(task)}
+              disabled={isSyncing}
+            >
               <Pencil className="h-3 w-3" />
             </Button>
-            <Button variant="ghost" size="icon" className="h-6 w-6 text-destructive hover:text-destructive" onClick={() => onDelete(task.id)}>
+            <Button
+              variant="ghost" size="icon"
+              className="h-6 w-6 text-destructive hover:text-destructive"
+              onClick={() => onDelete(task.id)}
+              disabled={isSyncing}
+            >
               <Trash2 className="h-3 w-3" />
             </Button>
           </div>
@@ -30,10 +75,10 @@ export default function TaskCard({ task, isAdmin, onEdit, onDelete, onStatusChan
       </div>
 
       {task.description && (
-        <p className="text-xs text-muted-foreground line-clamp-2">{task.description}</p>
+        <p className="text-xs text-muted-foreground line-clamp-2 pl-6">{task.description}</p>
       )}
 
-      <div className="flex flex-wrap items-center gap-1.5">
+      <div className="flex flex-wrap items-center gap-1.5 pl-6">
         <Badge variant={PRIORITY_VARIANT[task.priority]}>{PRIORITY_LABEL[task.priority]}</Badge>
         {task.assignedTo && (
           <Badge variant="outline" className="text-xs">{task.assignedTo.name}</Badge>
@@ -46,17 +91,6 @@ export default function TaskCard({ task, isAdmin, onEdit, onDelete, onStatusChan
           </span>
         )}
       </div>
-
-      {canChangeStatus && task.status !== 'DONE' && (
-        <Button
-          variant="outline"
-          size="sm"
-          className="w-full h-7 text-xs"
-          onClick={() => onStatusChange(task.id, nextStatus[task.status])}
-        >
-          {nextLabel[task.status]}
-        </Button>
-      )}
     </div>
   );
 }
