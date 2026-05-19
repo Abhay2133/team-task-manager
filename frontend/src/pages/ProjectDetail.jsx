@@ -13,7 +13,7 @@ import { Plus, Users, ArrowLeft, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import client from '@/api/client';
 import useAuthStore from '@/store/authStore';
-import TaskCard from '@/components/TaskCard';
+import TaskCard, { TaskCardContent } from '@/components/TaskCard';
 import TaskForm from '@/components/TaskForm';
 import MemberManager from '@/components/MemberManager';
 import { Button } from '@/components/ui/button';
@@ -248,14 +248,11 @@ export default function ProjectDetail() {
           ))}
         </div>
 
-        {/* Ghost card shown while dragging */}
+        {/* Full card ghost while dragging */}
         <DragOverlay dropAnimation={{ duration: 200, easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)' }}>
           {activeTask && (
-            <div className="bg-white border-2 border-primary rounded-lg p-3 shadow-2xl rotate-1 opacity-95">
-              <p className="text-sm font-medium">{activeTask.title}</p>
-              {activeTask.assignedTo && (
-                <p className="text-xs text-muted-foreground mt-1">{activeTask.assignedTo.name}</p>
-              )}
+            <div className="bg-white border-2 border-primary rounded-lg p-3 shadow-2xl space-y-2 rotate-1 opacity-95 pointer-events-none">
+              <TaskCardContent task={activeTask} isAdmin={false} showGrip={true} />
             </div>
           )}
         </DragOverlay>

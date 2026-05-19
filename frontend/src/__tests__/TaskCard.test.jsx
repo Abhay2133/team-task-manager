@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { DndContext } from '@dnd-kit/core';
-import TaskCard from '../components/TaskCard';
+import TaskCard, { TaskCardContent } from '../components/TaskCard';
 
 const baseTask = {
   id: 'task-1',
@@ -14,6 +14,15 @@ const baseTask = {
 };
 
 const wrap = (ui) => <DndContext>{ui}</DndContext>;
+
+describe('TaskCardContent (DragOverlay clone)', () => {
+  it('renders full card details without drag wrapper', () => {
+    render(<TaskCardContent task={baseTask} isAdmin={false} showGrip={true} />);
+    expect(screen.getByText('Fix the login bug')).toBeInTheDocument();
+    expect(screen.getByText('High')).toBeInTheDocument();
+    expect(screen.getByText('Alice')).toBeInTheDocument();
+  });
+});
 
 describe('TaskCard', () => {
   it('renders title', () => {
